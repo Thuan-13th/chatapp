@@ -4,25 +4,25 @@ import 'package:chatapp/services/auth/auth_service.dart';
 import 'package:chatapp/services/chat/chat_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+// import 'package:flutter/services.dart';
 
 class ChatPage extends StatefulWidget {
+  final String receiverUserName;
   final String receiverEmail;
   final String receiverID;
-  final String receiverUserName;
 
   const ChatPage({
     super.key,
+    required this.receiverUserName,
     required this.receiverEmail,
     required this.receiverID,
-    required this.receiverUserName,
   });
 
   @override
-  State<ChatPage> createState() => focus();
+  State<ChatPage> createState() => _ChatPageState();
 }
 
-// ignore: camel_case_types
-class focus extends State<ChatPage> {
+class _ChatPageState extends State<ChatPage> {
   //text controller
   final TextEditingController _messageController = TextEditingController();
 
@@ -31,14 +31,14 @@ class focus extends State<ChatPage> {
 
   final AuthService _authService = AuthService();
 
-  //for textfield focus
+  //for textfield forcus
   FocusNode myFocusNode = FocusNode();
 
   @override
   void initState() {
     super.initState();
 
-// add listener to focus node
+    // add listener to focus node
     myFocusNode.addListener(() {
       if (myFocusNode.hasFocus) {
         //cause a delay so that the keyboard has time to show up
@@ -51,7 +51,7 @@ class focus extends State<ChatPage> {
       }
     });
 
-    //wait a bit for list view to be built, then scroll to bottom
+    //wait a bit for listview to be built, then scroll to bottom
     Future.delayed(
       const Duration(milliseconds: 500),
       () => scrollDown(),
@@ -77,14 +77,15 @@ class focus extends State<ChatPage> {
 
   //send message
   void sendMessage() async {
-    //if there is something inside the textfield
-    if (_messageController.text.isNotEmpty) {
-      //send the message
-      await _chatService.sendMessage(
-          widget.receiverID, _messageController.text);
+    final message = _messageController.text;
 
-      //clear text controller
-      _messageController.clear();
+    //clear text controller
+    _messageController.clear();
+
+    //if there is something inside the textfield
+    if (message.isNotEmpty) {
+      //send the message
+      await _chatService.sendMessage(widget.receiverID, message);
     }
 
     scrollDown();
@@ -114,7 +115,7 @@ class focus extends State<ChatPage> {
     );
   }
 
-  // *1 build message list
+  // build message list
   Widget _buildMessageList() {
     String senderID = _authService.getCurrentUser()!.uid;
     return StreamBuilder(
@@ -140,14 +141,14 @@ class focus extends State<ChatPage> {
     );
   }
 
-  // *2 build message item
+  //build message item
   Widget _buildMessageItem(DocumentSnapshot doc) {
     Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
 
     // is current user
     bool isCurrentUser = data['senderID'] == _authService.getCurrentUser()!.uid;
 
-    // align message to the right if sender is the current user, otherwise left
+    //align message to the right if sender is the current user, otherwise left
     var alignment =
         isCurrentUser ? Alignment.centerRight : Alignment.centerLeft;
 
@@ -160,38 +161,46 @@ class focus extends State<ChatPage> {
           ChatBubble(
             message: data["message"],
             isCurrentUser: isCurrentUser,
-          )
+          ),
+
+          // hiển thị thời gian người dùng và người gửi tin nhắn
+          Padding(
+            padding: const EdgeInsets.only(left: 8.0),
+            child: Text(
+              _formatTimestamp(data['timestamp']),
+              style: const TextStyle(fontSize: 10, color: Colors.grey),
+            ),
+          ),
         ],
       ),
     );
   }
 
+  String _formatTimestamp(Timestamp timestamp) {
+    DateTime dateTime = timestamp.toDate();
+    return '${dateTime.hour.toString().padLeft(2, '0')}:${dateTime.minute.toString().padLeft(2, '0')}';
+  }
+
   //build message input
   Widget _buildUserInput() {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 30),
+      padding: const EdgeInsets.only(bottom: 40),
       child: Row(
         children: [
-          //textfield should take up most of the space
+          //textfiled should take up most of the space
           Expanded(
-            child: Padding(
-              padding: const EdgeInsets.all(15.0),
-              child: Container(
-                height: 50,
-                child: MyTextField(
-                  controller: _messageController,
-                  hintText: "Type a message",
-                  obscureText: false,
-                  focusNode: myFocusNode,
-                ),
-              ),
+            child: MyTextField(
+              controller: _messageController,
+              hintText: "Type a message",
+              obscureText: false,
+              focusNode: myFocusNode,
             ),
           ),
 
           //send button
           Container(
             decoration: const BoxDecoration(
-              color: Colors.green,
+              color: Colors.blue,
               shape: BoxShape.circle,
             ),
             margin: const EdgeInsets.only(right: 20),

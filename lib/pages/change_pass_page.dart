@@ -1,3 +1,4 @@
+import 'package:chatapp/components/my_button.dart';
 import 'package:chatapp/components/my_textfield.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -7,28 +8,31 @@ class ChangePasswordPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    TextEditingController _oldPasswordController = TextEditingController();
-    TextEditingController _newPasswordController = TextEditingController();
-    TextEditingController _confirmPasswordController = TextEditingController();
+    TextEditingController oldPasswordController = TextEditingController();
+    TextEditingController newPasswordController = TextEditingController();
+    TextEditingController confirmPasswordController = TextEditingController();
 
-    final _auth = FirebaseAuth.instance;
+    final auth = FirebaseAuth.instance;
 
-    void _changePassword() async {
+    void changePassword() async {
       try {
-        User? user = _auth.currentUser;
+        User? user = auth.currentUser;
         if (user != null) {
           // Thay đổi mật khẩu
-          await user.updatePassword(_newPasswordController.text);
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          await user.updatePassword(newPasswordController.text);
+          // ignore: use_build_context_synchronously
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
             content: Text('Password changed successfully.'),
           ));
+          // ignore: use_build_context_synchronously
           Navigator.pop(context); // Quay lại màn hình trước đó
         } else {
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
             content: Text('User not found.'),
           ));
         }
       } catch (error) {
+        // ignore: use_build_context_synchronously
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: Text('Failed to change password: $error'),
         ));
@@ -37,10 +41,10 @@ class ChangePasswordPage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Change Password'),
+        title: const Text('Change Password'),
       ),
       body: Padding(
-        padding: EdgeInsets.all(5.0),
+        padding: const EdgeInsets.all(5.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -50,7 +54,7 @@ class ChangePasswordPage extends StatelessWidget {
             MyTextField(
               hintText: "Old Password",
               obscureText: true,
-              controller: _oldPasswordController,
+              controller: oldPasswordController,
             ),
 
             const SizedBox(height: 20),
@@ -59,7 +63,7 @@ class ChangePasswordPage extends StatelessWidget {
             MyTextField(
               hintText: "New Password",
               obscureText: true,
-              controller: _newPasswordController,
+              controller: newPasswordController,
             ),
 
             const SizedBox(height: 20),
@@ -68,24 +72,18 @@ class ChangePasswordPage extends StatelessWidget {
             MyTextField(
               hintText: "New Password",
               obscureText: true,
-              controller: _confirmPasswordController,
+              controller: confirmPasswordController,
             ),
 
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
 
+            //Change Password button
             Container(
-              alignment: Alignment.bottomCenter,
-              child: ElevatedButton(
-                onPressed: _changePassword,
-                child: Container(
-                  padding: EdgeInsets.all(20),
-                  child: Text(
-                    'Change Password',
-                    style: TextStyle(
-                      fontSize: 16,
-                    ),
-                  ),
-                ),
+              alignment: Alignment.center,
+              // padding: const EdgeInsets.all(25),
+              child: MyButton(
+                text: "Change Password",
+                onTap: () => changePassword(),
               ),
             ),
           ],

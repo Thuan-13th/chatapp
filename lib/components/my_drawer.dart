@@ -22,16 +22,13 @@ class MyDrawer extends StatelessWidget {
           Column(
             children: [
               //logo
-              Container(
-                // color: Colors.white,
-                child: DrawerHeader(
-                  margin: const EdgeInsets.only(top: 8),
-                  child: Center(
-                    child: Icon(
-                      Icons.message,
-                      color: Theme.of(context).colorScheme.primary,
-                      size: 60,
-                    ),
+              DrawerHeader(
+                margin: const EdgeInsets.only(top: 8),
+                child: Center(
+                  child: Icon(
+                    Icons.message,
+                    color: Theme.of(context).colorScheme.primary,
+                    size: 60,
                   ),
                 ),
               ),

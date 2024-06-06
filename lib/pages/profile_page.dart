@@ -1,9 +1,11 @@
+import 'package:chatapp/components/my_button.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:chatapp/pages/change_pass_page.dart';
 
 class ProfilePage extends StatelessWidget {
+  // ignore: use_key_in_widget_constructors
   ProfilePage({Key? key});
 
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -29,8 +31,8 @@ class ProfilePage extends StatelessWidget {
   }
 
   void _showEditUsernameDialog(BuildContext context, String currentUsername) {
-    final TextEditingController _usernameController = TextEditingController();
-    _usernameController.text = currentUsername;
+    final TextEditingController usernameController = TextEditingController();
+    usernameController.text = currentUsername;
 
     showDialog(
       context: context,
@@ -38,7 +40,7 @@ class ProfilePage extends StatelessWidget {
         return AlertDialog(
           title: const Text('Edit Username'),
           content: TextField(
-            controller: _usernameController,
+            controller: usernameController,
             decoration: const InputDecoration(hintText: "Enter new username"),
           ),
           actions: [
@@ -48,10 +50,12 @@ class ProfilePage extends StatelessWidget {
             ),
             TextButton(
               onPressed: () async {
-                await _updateUsername(context, _usernameController.text);
+                await _updateUsername(context, usernameController.text);
+                // ignore: use_build_context_synchronously
                 Navigator.of(context).pop();
                 // Gọi setState để cập nhật lại giao diện
                 Navigator.pushReplacement(
+                  // ignore: use_build_context_synchronously
                   context,
                   MaterialPageRoute(
                     builder: (context) => ProfilePage(),
@@ -99,7 +103,7 @@ class ProfilePage extends StatelessWidget {
                     shape: BoxShape.circle,
                     color: Theme.of(context).colorScheme.secondary,
                   ),
-                  child: Icon(
+                  child: const Icon(
                     Icons.person,
                     size: 80,
                   ),
@@ -167,26 +171,12 @@ class ProfilePage extends StatelessWidget {
                 const SizedBox(height: 25),
 
                 //nút change pass
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => ChangePasswordPage(),
-                      ),
-                    );
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Theme.of(context).colorScheme.secondary,
-                  ),
-                  child: Container(
-                    padding: const EdgeInsets.all(25),
-                    // decoration: BoxDecoration(),
-                    child: const Text(
-                      'Change Password',
-                      style: TextStyle(
-                        fontSize: 16,
-                      ),
+                MyButton(
+                  text: "Change Password",
+                  onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const ChangePasswordPage(),
                     ),
                   ),
                 ),

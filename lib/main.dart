@@ -1,5 +1,7 @@
 import 'package:chatapp/services/auth/auth_gate.dart';
 import 'package:chatapp/firebase_options.dart';
+import 'package:chatapp/services/auth/auth_service.dart';
+import 'package:chatapp/services/chat/chat_service.dart';
 import 'package:chatapp/themes/theme_provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -15,7 +17,14 @@ Future<void> main() async {
   runApp(
     ChangeNotifierProvider(
       create: (context) => ThemeProvider(),
-      child: const MyApp(),
+      //hiểnn thị tg user_tile
+      child: MultiProvider(
+        providers: [
+          Provider<AuthService>(create: (_) => AuthService()),
+          Provider<ChatService>(create: (_) => ChatService()),
+        ],
+        child: const MyApp(),
+      ),
     ),
   );
 }

@@ -30,6 +30,7 @@ class LoginPage extends StatelessWidget {
     //catch any errors
     catch (e) {
       showDialog(
+        // ignore: use_build_context_synchronously
         context: context,
         builder: (context) => AlertDialog(
           title: Text(e.toString()),
