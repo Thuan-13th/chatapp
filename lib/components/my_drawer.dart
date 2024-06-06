@@ -1,3 +1,4 @@
+import 'package:chatapp/pages/profile_page.dart';
 import 'package:chatapp/services/auth/auth_service.dart';
 import 'package:chatapp/pages/settings_page.dart';
 import 'package:flutter/material.dart';
@@ -21,12 +22,16 @@ class MyDrawer extends StatelessWidget {
           Column(
             children: [
               //logo
-              DrawerHeader(
-                child: Center(
-                  child: Icon(
-                    Icons.message,
-                    color: Theme.of(context).colorScheme.primary,
-                    size: 40,
+              Container(
+                // color: Colors.white,
+                child: DrawerHeader(
+                  margin: const EdgeInsets.only(top: 8),
+                  child: Center(
+                    child: Icon(
+                      Icons.message,
+                      color: Theme.of(context).colorScheme.primary,
+                      size: 60,
+                    ),
                   ),
                 ),
               ),
@@ -59,6 +64,27 @@ class MyDrawer extends StatelessWidget {
                       context,
                       MaterialPageRoute(
                         builder: (context) => const SettingsPage(),
+                      ),
+                    );
+                  },
+                ),
+              ),
+
+              //setting list tile
+              Padding(
+                padding: const EdgeInsets.only(left: 25),
+                child: ListTile(
+                  title: const Text("P R O F I L E"),
+                  leading: const Icon(Icons.person_sharp),
+                  onTap: () {
+                    //pop the drawer
+                    Navigator.pop(context);
+
+                    //navigate to setting page
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ProfilePage(),
                       ),
                     );
                   },

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class MyTextField extends StatelessWidget {
+class MyTextField extends StatefulWidget {
   final String hintText;
   final bool obscureText;
   final TextEditingController controller;
@@ -15,25 +15,35 @@ class MyTextField extends StatelessWidget {
   });
 
   @override
+  State<MyTextField> createState() => _MyTextFieldState();
+}
+
+class _MyTextFieldState extends State<MyTextField> {
+  @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 25.0),
       child: TextField(
-        obscureText: obscureText,
-        controller: controller,
-        focusNode: focusNode,
+        maxLines: widget.obscureText
+            ? 1
+            : null, // Ensure maxLines is 1 if obscureText is true
+        obscureText: widget.obscureText,
+        controller: widget.controller,
+        focusNode: widget.focusNode,
         decoration: InputDecoration(
-          enabledBorder: OutlineInputBorder(
-            borderSide:
-                BorderSide(color: Theme.of(context).colorScheme.tertiary),
+          border: OutlineInputBorder(
+            // borderSide:
+            //     BorderSide(color: Theme.of(context).colorScheme.tertiary),
+            borderRadius: BorderRadius.circular(15.0),
           ),
           focusedBorder: OutlineInputBorder(
-            borderSide:
-                BorderSide(color: Theme.of(context).colorScheme.primary),
+            // borderSide:
+            //     BorderSide(color: Theme.of(context).colorScheme.primary),
+            borderRadius: BorderRadius.circular(15.0),
           ),
           fillColor: Theme.of(context).colorScheme.secondary,
           filled: true,
-          hintText: hintText,
+          hintText: widget.hintText,
           hintStyle: TextStyle(color: Theme.of(context).colorScheme.primary),
         ),
       ),

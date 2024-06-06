@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class AuthService {
-  //instane of auth and firestore
+  // instance of auth and firestore
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
@@ -11,42 +11,48 @@ class AuthService {
     return _auth.currentUser;
   }
 
-  //sign in
-  Future<UserCredential> signInWithEmailPassword(String email, password) async {
+  // stream for current user data
+  Stream<DocumentSnapshot> getCurrentUserStream() {
+    User? currentUser = _auth.currentUser;
+    if (currentUser != null) {
+      return _firestore.collection('Users').doc(currentUser.uid).snapshots();
+    } else {
+      throw Exception("User not logged in");
+    }
+  }
+
+  // đăng nhập
+  Future<UserCredential> signInWithEmailPassword(
+      String email, String password) async {
     try {
       // sign user in
       UserCredential userCredential = await _auth.signInWithEmailAndPassword(
         email: email,
         password: password,
       );
-      //save user info if it doesn't already exist
-      _firestore.collection("Users").doc(userCredential.user!.uid).set(
-        {
-          'uid': userCredential.user!.uid,
-          'email': email,
-        },
-      );
       return userCredential;
     } on FirebaseAuthException catch (e) {
       throw Exception(e.code);
     }
   }
 
-  //sign up
-  Future<UserCredential> signUpWithEmailPassword(String email, password) async {
+  // đăng kí
+  Future<UserCredential> signUpWithEmailPassword(
+      String email, String password, String username) async {
     try {
-      //create user
+      // tạo người dùng
       UserCredential userCredential =
           await _auth.createUserWithEmailAndPassword(
         email: email,
         password: password,
       );
 
-      //save user info in a separate doc
-      _firestore.collection("Users").doc(userCredential.user!.uid).set(
+      // lưu thông tin người dùng vào một tài liệu riêng
+      await _firestore.collection("Users").doc(userCredential.user!.uid).set(
         {
           'uid': userCredential.user!.uid,
           'email': email,
+          'username': username,
         },
       );
 
@@ -56,9 +62,8 @@ class AuthService {
     }
   }
 
-  //sign out
+  // sign out
   Future<void> signOut() async {
     return await _auth.signOut();
   }
-  //errors
 }

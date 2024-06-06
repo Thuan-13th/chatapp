@@ -8,18 +8,24 @@ class ChatService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   //get use stream
+
   /**
    
   List<Map<String,dynamic> = 
   {
-    email
+    'email': t@gmail.com,
+    'uid':...
+  }
+  {
+    'email': t1@gmail.com,
+    'uid':...
   }
    */
 
   Stream<List<Map<String, dynamic>>> getUsersStream() {
     return _firestore.collection("Users").snapshots().map((snapshot) {
       return snapshot.docs.map((doc) {
-        // go through each individual user
+        // go through each individual user *duyet
         final user = doc.data();
 
         //return user
@@ -57,7 +63,7 @@ class ChatService {
         .add(newMessage.toMap());
   }
 
-  //get message
+  // get message
   Stream<QuerySnapshot> getMessages(String userID, otherUserID) {
     //construct a chatroom ID for the two users
     List<String> ids = [userID, otherUserID];

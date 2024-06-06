@@ -8,18 +8,21 @@ import 'package:flutter/material.dart';
 class ChatPage extends StatefulWidget {
   final String receiverEmail;
   final String receiverID;
+  final String receiverUserName;
 
-  ChatPage({
+  const ChatPage({
     super.key,
     required this.receiverEmail,
     required this.receiverID,
+    required this.receiverUserName,
   });
 
   @override
-  State<ChatPage> createState() => _ChatPageState();
+  State<ChatPage> createState() => focus();
 }
 
-class _ChatPageState extends State<ChatPage> {
+// ignore: camel_case_types
+class focus extends State<ChatPage> {
   //text controller
   final TextEditingController _messageController = TextEditingController();
 
@@ -28,7 +31,7 @@ class _ChatPageState extends State<ChatPage> {
 
   final AuthService _authService = AuthService();
 
-  //for textfield forcus
+  //for textfield focus
   FocusNode myFocusNode = FocusNode();
 
   @override
@@ -48,7 +51,7 @@ class _ChatPageState extends State<ChatPage> {
       }
     });
 
-    //wait a bit for listview to be built, then scroll to bottom
+    //wait a bit for list view to be built, then scroll to bottom
     Future.delayed(
       const Duration(milliseconds: 500),
       () => scrollDown(),
@@ -92,7 +95,7 @@ class _ChatPageState extends State<ChatPage> {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.background,
       appBar: AppBar(
-        title: Text(widget.receiverEmail),
+        title: Text(widget.receiverUserName),
         backgroundColor: Colors.transparent,
         elevation: 0,
         foregroundColor: Colors.grey,
@@ -111,7 +114,7 @@ class _ChatPageState extends State<ChatPage> {
     );
   }
 
-  // build message list
+  // *1 build message list
   Widget _buildMessageList() {
     String senderID = _authService.getCurrentUser()!.uid;
     return StreamBuilder(
@@ -122,7 +125,7 @@ class _ChatPageState extends State<ChatPage> {
           return const Text("Error");
         }
 
-        //laoding
+        //loading
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Text("Loading..");
         }
@@ -137,14 +140,14 @@ class _ChatPageState extends State<ChatPage> {
     );
   }
 
-  //build message item
+  // *2 build message item
   Widget _buildMessageItem(DocumentSnapshot doc) {
     Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
 
     // is current user
     bool isCurrentUser = data['senderID'] == _authService.getCurrentUser()!.uid;
 
-    //align message to the right if sender is the current user, otherwise left
+    // align message to the right if sender is the current user, otherwise left
     var alignment =
         isCurrentUser ? Alignment.centerRight : Alignment.centerLeft;
 
@@ -166,16 +169,22 @@ class _ChatPageState extends State<ChatPage> {
   //build message input
   Widget _buildUserInput() {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 40),
+      padding: const EdgeInsets.only(bottom: 30),
       child: Row(
         children: [
-          //textfiled should take up most of the space
+          //textfield should take up most of the space
           Expanded(
-            child: MyTextField(
-              controller: _messageController,
-              hintText: "Type a message",
-              obscureText: false,
-              focusNode: myFocusNode,
+            child: Padding(
+              padding: const EdgeInsets.all(15.0),
+              child: Container(
+                height: 50,
+                child: MyTextField(
+                  controller: _messageController,
+                  hintText: "Type a message",
+                  obscureText: false,
+                  focusNode: myFocusNode,
+                ),
+              ),
             ),
           ),
 
